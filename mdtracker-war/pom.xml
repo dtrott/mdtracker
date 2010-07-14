@@ -5,11 +5,10 @@
     <parent>
         <groupId>com.davidtrott</groupId>
         <artifactId>mdtracker</artifactId>
-        <version>1.0</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>mdtracker-war</artifactId>
-    <version>1.0</version>
     <packaging>war</packaging>
     <name>Maven Dependency Tracker War</name>
 
