@@ -1,0 +1,274 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="versionString" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{versionStringHome.managed ? 'Edit' : 'Add'} Version string</f:facet>
+
+            <s:decorate id="majorField" template="layout/edit.xhtml">
+                <ui:define name="label">Major</ui:define>
+                <h:inputText id="major"
+                          value="#{versionStringHome.instance.major}">
+                    <a:support event="onblur" reRender="majorField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="minorField" template="layout/edit.xhtml">
+                <ui:define name="label">Minor</ui:define>
+                <h:inputText id="minor"
+                          value="#{versionStringHome.instance.minor}">
+                    <a:support event="onblur" reRender="minorField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="buildField" template="layout/edit.xhtml">
+                <ui:define name="label">Build</ui:define>
+                <h:inputText id="build"
+                          value="#{versionStringHome.instance.build}">
+                    <a:support event="onblur" reRender="buildField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="customField" template="layout/edit.xhtml">
+                <ui:define name="label">Custom</ui:define>
+                <h:inputText id="custom"
+                           size="100"
+                      maxlength="100"
+                          value="#{versionStringHome.instance.custom}">
+                    <a:support event="onblur" reRender="customField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="snapshotField" template="layout/edit.xhtml">
+                <ui:define name="label">Snapshot</ui:define>
+                <h:selectBooleanCheckbox id="snapshot"
+                                   required="true"
+                                      value="#{versionStringHome.instance.snapshot}"/>
+            </s:decorate>
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{versionStringHome.persist}"
+                       disabled="#{!versionStringHome.wired}"
+                       rendered="#{!versionStringHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{versionStringHome.update}"
+                       rendered="#{versionStringHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{versionStringHome.remove}"
+                      immediate="true"
+                       rendered="#{versionStringHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/VersionString.xhtml"
+                rendered="#{versionStringHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty versionStringFrom ? 'VersionStringList' : versionStringFrom}.xhtml"
+                rendered="#{!versionStringHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Module ranges for end version id">
+        <h:form styleClass="association" id="moduleRangesForEndVersionIdChildren">
+
+            <h:outputText value="There are no moduleRangesForEndVersionId associated with this versionString."
+                       rendered="#{empty versionStringHome.moduleRangesForEndVersionId}"/>
+
+            <rich:dataTable value="#{versionStringHome.moduleRangesForEndVersionId}"
+                           var="_moduleRange"
+                      rendered="#{not empty versionStringHome.moduleRangesForEndVersionId}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="moduleRangesForEndVersionIdTable">
+                <rich:column sortBy="#{_moduleRange.moduleRangeId}">
+                    <f:facet name="header">Module range id</f:facet>
+                    <h:outputText value="#{_moduleRange.moduleRangeId}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.endInclusive}">
+                    <f:facet name="header">End inclusive</f:facet>
+                    <h:outputText value="#{_moduleRange.endInclusive}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.startInclusive}">
+                    <f:facet name="header">Start inclusive</f:facet>
+                    <h:outputText value="#{_moduleRange.startInclusive}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.suggestion}">
+                    <f:facet name="header">Suggestion</f:facet>
+                    <h:outputText value="#{_moduleRange.suggestion}"/>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{versionStringHome.managed}" id="moduleRangesForEndVersionId">
+        <div class="actionButtons">
+            <s:button id="addmoduleRange"
+                   value="Add moduleRange"
+                    view="/ModuleRangeEdit.xhtml"
+             propagation="none">
+                 <f:param name="versionStringVersionId"
+                         value="#{versionStringHome.instance.versionId}"/>
+                 <f:param name="moduleRangeFrom" value="VersionString"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+
+    <rich:tab label="Module ranges for latest release version id">
+        <h:form styleClass="association" id="moduleRangesForLatestReleaseVersionIdChildren">
+
+            <h:outputText value="There are no moduleRangesForLatestReleaseVersionId associated with this versionString."
+                       rendered="#{empty versionStringHome.moduleRangesForLatestReleaseVersionId}"/>
+
+            <rich:dataTable value="#{versionStringHome.moduleRangesForLatestReleaseVersionId}"
+                           var="_moduleRange"
+                      rendered="#{not empty versionStringHome.moduleRangesForLatestReleaseVersionId}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="moduleRangesForLatestReleaseVersionIdTable">
+                <rich:column sortBy="#{_moduleRange.moduleRangeId}">
+                    <f:facet name="header">Module range id</f:facet>
+                    <h:outputText value="#{_moduleRange.moduleRangeId}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.endInclusive}">
+                    <f:facet name="header">End inclusive</f:facet>
+                    <h:outputText value="#{_moduleRange.endInclusive}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.startInclusive}">
+                    <f:facet name="header">Start inclusive</f:facet>
+                    <h:outputText value="#{_moduleRange.startInclusive}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.suggestion}">
+                    <f:facet name="header">Suggestion</f:facet>
+                    <h:outputText value="#{_moduleRange.suggestion}"/>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{versionStringHome.managed}" id="moduleRangesForLatestReleaseVersionId">
+        <div class="actionButtons">
+            <s:button id="addmoduleRange"
+                   value="Add moduleRange"
+                    view="/ModuleRangeEdit.xhtml"
+             propagation="none">
+                 <f:param name="versionStringVersionId"
+                         value="#{versionStringHome.instance.versionId}"/>
+                 <f:param name="moduleRangeFrom" value="VersionString"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+
+    <rich:tab label="Module ranges for start version id">
+        <h:form styleClass="association" id="moduleRangesForStartVersionIdChildren">
+
+            <h:outputText value="There are no moduleRangesForStartVersionId associated with this versionString."
+                       rendered="#{empty versionStringHome.moduleRangesForStartVersionId}"/>
+
+            <rich:dataTable value="#{versionStringHome.moduleRangesForStartVersionId}"
+                           var="_moduleRange"
+                      rendered="#{not empty versionStringHome.moduleRangesForStartVersionId}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="moduleRangesForStartVersionIdTable">
+                <rich:column sortBy="#{_moduleRange.moduleRangeId}">
+                    <f:facet name="header">Module range id</f:facet>
+                    <h:outputText value="#{_moduleRange.moduleRangeId}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.endInclusive}">
+                    <f:facet name="header">End inclusive</f:facet>
+                    <h:outputText value="#{_moduleRange.endInclusive}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.startInclusive}">
+                    <f:facet name="header">Start inclusive</f:facet>
+                    <h:outputText value="#{_moduleRange.startInclusive}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.suggestion}">
+                    <f:facet name="header">Suggestion</f:facet>
+                    <h:outputText value="#{_moduleRange.suggestion}"/>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{versionStringHome.managed}" id="moduleRangesForStartVersionId">
+        <div class="actionButtons">
+            <s:button id="addmoduleRange"
+                   value="Add moduleRange"
+                    view="/ModuleRangeEdit.xhtml"
+             propagation="none">
+                 <f:param name="versionStringVersionId"
+                         value="#{versionStringHome.instance.versionId}"/>
+                 <f:param name="moduleRangeFrom" value="VersionString"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+
+    <rich:tab label="Module versions">
+        <h:form styleClass="association" id="moduleVersionsChildren">
+
+            <h:outputText value="There are no moduleVersions associated with this versionString."
+                       rendered="#{empty versionStringHome.moduleVersions}"/>
+
+            <rich:dataTable value="#{versionStringHome.moduleVersions}"
+                           var="_moduleVersion"
+                      rendered="#{not empty versionStringHome.moduleVersions}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="moduleVersionsTable">
+                <rich:column sortBy="#{_moduleVersion.moduleVersionId}">
+                    <f:facet name="header">Module version id</f:facet>
+                    <h:outputText value="#{_moduleVersion.moduleVersionId}"/>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{versionStringHome.managed}" id="moduleVersions">
+        <div class="actionButtons">
+            <s:button id="addmoduleVersion"
+                   value="Add moduleVersion"
+                    view="/ModuleVersionEdit.xhtml"
+             propagation="none">
+                 <f:param name="versionStringVersionId"
+                         value="#{versionStringHome.instance.versionId}"/>
+                 <f:param name="moduleVersionFrom" value="VersionString"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

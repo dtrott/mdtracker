@@ -1,0 +1,297 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Module range Details</f:facet>
+
+
+        <s:decorate id="endInclusive" template="layout/display.xhtml">
+            <ui:define name="label">End inclusive</ui:define>
+            <h:outputText value="#{moduleRangeHome.instance.endInclusive}"/>
+        </s:decorate>
+
+        <s:decorate id="startInclusive" template="layout/display.xhtml">
+            <ui:define name="label">Start inclusive</ui:define>
+            <h:outputText value="#{moduleRangeHome.instance.startInclusive}"/>
+        </s:decorate>
+
+        <s:decorate id="suggestion" template="layout/display.xhtml">
+            <ui:define name="label">Suggestion</ui:define>
+            <h:outputText value="#{moduleRangeHome.instance.suggestion}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/ModuleRangeEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty moduleRangeFrom ? 'ModuleRangeList' : moduleRangeFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+    <rich:tabPanel switchType="ajax">
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/onetomany.gif" style="vertical-align: middle; padding-right: 4px;"/>Dependencies</h:panelGroup>
+        </f:facet>
+    <h:form styleClass="association" id="dependenciesChildren">
+
+        <h:outputText value="There are no dependencies associated with this moduleRange."
+                   rendered="#{empty moduleRangeHome.dependencies}"/>
+
+        <rich:dataTable value="#{moduleRangeHome.dependencies}"
+                       var="_dependency"
+                  rendered="#{not empty moduleRangeHome.dependencies}"
+                rowClasses="rvgRowOne,rvgRowTwo"
+                        id="dependenciesTable">
+            <rich:column sortBy="#{_dependency.id.moduleRangeId}">
+                <f:facet name="header">Module range id</f:facet>
+                <h:outputText value="#{_dependency.id.moduleRangeId}"/>
+            </rich:column>
+            <rich:column sortBy="#{_dependency.id.moduleVersionId}">
+                <f:facet name="header">Module version id</f:facet>
+                <h:outputText value="#{_dependency.id.moduleVersionId}"/>
+            </rich:column>
+            <h:column>
+                <f:facet name="header">Action</f:facet>
+                <s:link id="selectdependency"
+                     value="Select"
+                      view="/Dependency.xhtml">
+                    <f:param name="dependencyModuleRangeId"
+                            value="#{_dependency.id.moduleRangeId}"/>
+                    <f:param name="dependencyModuleVersionId"
+                            value="#{_dependency.id.moduleVersionId}"/>
+                    <f:param name="dependencyFrom" value="ModuleRange"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </h:form>
+
+    <div class="actionButtons">
+        <s:button
+               value="Add dependency"
+                view="/DependencyEdit.xhtml">
+            <f:param name="moduleRangeModuleRangeId"
+                    value="#{moduleRangeHome.instance.moduleRangeId}"/>
+            <f:param name="dependencyFrom" value="ModuleRange"/>
+        </s:button>
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Module</h:panelGroup>
+        </f:facet>
+    <div class="association" id="moduleParent">
+
+        <h:outputText value="There is no module associated with this moduleRange."
+                   rendered="#{moduleRangeHome.instance.module == null}"/>
+
+        <rich:dataTable var="_module"
+                   value="#{moduleRangeHome.instance.module}"
+                rendered="#{moduleRangeHome.instance.module != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="moduleTable">
+            <h:column>
+                <f:facet name="header">Module id</f:facet>
+                <h:outputText value="#{_module.moduleId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Artifact id</f:facet>
+                <h:outputText value="#{_module.artifactId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Group id</f:facet>
+                <h:outputText value="#{_module.groupId}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewmodule"
+                     value="View"
+                      view="/Module.xhtml">
+                    <f:param name="moduleModuleId"
+                           value="#{_module.moduleId}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Version string by end version id</h:panelGroup>
+        </f:facet>
+    <div class="association" id="versionStringByEndVersionIdParent">
+
+        <h:outputText value="There is no versionStringByEndVersionId associated with this moduleRange."
+                   rendered="#{moduleRangeHome.instance.versionStringByEndVersionId == null}"/>
+
+        <rich:dataTable var="_versionString"
+                   value="#{moduleRangeHome.instance.versionStringByEndVersionId}"
+                rendered="#{moduleRangeHome.instance.versionStringByEndVersionId != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="versionStringByEndVersionIdTable">
+            <h:column>
+                <f:facet name="header">Version id</f:facet>
+                <h:outputText value="#{_versionString.versionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Build</f:facet>
+                <h:outputText value="#{_versionString.build}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Custom</f:facet>
+                <h:outputText value="#{_versionString.custom}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Major</f:facet>
+                <h:outputText value="#{_versionString.major}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Minor</f:facet>
+                <h:outputText value="#{_versionString.minor}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Snapshot</f:facet>
+                <h:outputText value="#{_versionString.snapshot}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewversionString"
+                     value="View"
+                      view="/VersionString.xhtml">
+                    <f:param name="versionStringVersionId"
+                           value="#{_versionString.versionId}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Version string by latest release version id</h:panelGroup>
+        </f:facet>
+    <div class="association" id="versionStringByLatestReleaseVersionIdParent">
+
+        <h:outputText value="There is no versionStringByLatestReleaseVersionId associated with this moduleRange."
+                   rendered="#{moduleRangeHome.instance.versionStringByLatestReleaseVersionId == null}"/>
+
+        <rich:dataTable var="_versionString"
+                   value="#{moduleRangeHome.instance.versionStringByLatestReleaseVersionId}"
+                rendered="#{moduleRangeHome.instance.versionStringByLatestReleaseVersionId != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="versionStringByLatestReleaseVersionIdTable">
+            <h:column>
+                <f:facet name="header">Version id</f:facet>
+                <h:outputText value="#{_versionString.versionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Build</f:facet>
+                <h:outputText value="#{_versionString.build}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Custom</f:facet>
+                <h:outputText value="#{_versionString.custom}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Major</f:facet>
+                <h:outputText value="#{_versionString.major}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Minor</f:facet>
+                <h:outputText value="#{_versionString.minor}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Snapshot</f:facet>
+                <h:outputText value="#{_versionString.snapshot}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewversionString"
+                     value="View"
+                      view="/VersionString.xhtml">
+                    <f:param name="versionStringVersionId"
+                           value="#{_versionString.versionId}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Version string by start version id</h:panelGroup>
+        </f:facet>
+    <div class="association" id="versionStringByStartVersionIdParent">
+
+        <h:outputText value="There is no versionStringByStartVersionId associated with this moduleRange."
+                   rendered="#{moduleRangeHome.instance.versionStringByStartVersionId == null}"/>
+
+        <rich:dataTable var="_versionString"
+                   value="#{moduleRangeHome.instance.versionStringByStartVersionId}"
+                rendered="#{moduleRangeHome.instance.versionStringByStartVersionId != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="versionStringByStartVersionIdTable">
+            <h:column>
+                <f:facet name="header">Version id</f:facet>
+                <h:outputText value="#{_versionString.versionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Build</f:facet>
+                <h:outputText value="#{_versionString.build}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Custom</f:facet>
+                <h:outputText value="#{_versionString.custom}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Major</f:facet>
+                <h:outputText value="#{_versionString.major}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Minor</f:facet>
+                <h:outputText value="#{_versionString.minor}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Snapshot</f:facet>
+                <h:outputText value="#{_versionString.snapshot}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewversionString"
+                     value="View"
+                      view="/VersionString.xhtml">
+                    <f:param name="versionStringVersionId"
+                           value="#{_versionString.versionId}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

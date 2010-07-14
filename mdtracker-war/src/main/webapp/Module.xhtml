@@ -1,0 +1,145 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Module Details</f:facet>
+
+
+        <s:decorate id="artifactId" template="layout/display.xhtml">
+            <ui:define name="label">Artifact id</ui:define>
+            <h:outputText value="#{moduleHome.instance.artifactId}"/>
+        </s:decorate>
+
+        <s:decorate id="groupId" template="layout/display.xhtml">
+            <ui:define name="label">Group id</ui:define>
+            <h:outputText value="#{moduleHome.instance.groupId}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/ModuleEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty moduleFrom ? 'ModuleList' : moduleFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+    <rich:tabPanel switchType="ajax">
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/onetomany.gif" style="vertical-align: middle; padding-right: 4px;"/>Module ranges</h:panelGroup>
+        </f:facet>
+    <h:form styleClass="association" id="moduleRangesChildren">
+
+        <h:outputText value="There are no moduleRanges associated with this module."
+                   rendered="#{empty moduleHome.moduleRanges}"/>
+
+        <rich:dataTable value="#{moduleHome.moduleRanges}"
+                       var="_moduleRange"
+                  rendered="#{not empty moduleHome.moduleRanges}"
+                rowClasses="rvgRowOne,rvgRowTwo"
+                        id="moduleRangesTable">
+            <rich:column sortBy="#{_moduleRange.moduleRangeId}">
+                <f:facet name="header">Module range id</f:facet>
+                <h:outputText value="#{_moduleRange.moduleRangeId}"/>
+            </rich:column>
+            <rich:column sortBy="#{_moduleRange.endInclusive}">
+                <f:facet name="header">End inclusive</f:facet>
+                <h:outputText value="#{_moduleRange.endInclusive}"/>
+            </rich:column>
+            <rich:column sortBy="#{_moduleRange.startInclusive}">
+                <f:facet name="header">Start inclusive</f:facet>
+                <h:outputText value="#{_moduleRange.startInclusive}"/>
+            </rich:column>
+            <rich:column sortBy="#{_moduleRange.suggestion}">
+                <f:facet name="header">Suggestion</f:facet>
+                <h:outputText value="#{_moduleRange.suggestion}"/>
+            </rich:column>
+            <h:column>
+                <f:facet name="header">Action</f:facet>
+                <s:link id="selectmoduleRange"
+                     value="Select"
+                      view="/ModuleRange.xhtml">
+                    <f:param name="moduleRangeModuleRangeId"
+                            value="#{_moduleRange.moduleRangeId}"/>
+                    <f:param name="moduleRangeFrom" value="Module"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </h:form>
+
+    <div class="actionButtons">
+        <s:button
+               value="Add moduleRange"
+                view="/ModuleRangeEdit.xhtml">
+            <f:param name="moduleModuleId"
+                    value="#{moduleHome.instance.moduleId}"/>
+            <f:param name="moduleRangeFrom" value="Module"/>
+        </s:button>
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/onetomany.gif" style="vertical-align: middle; padding-right: 4px;"/>Module versions</h:panelGroup>
+        </f:facet>
+    <h:form styleClass="association" id="moduleVersionsChildren">
+
+        <h:outputText value="There are no moduleVersions associated with this module."
+                   rendered="#{empty moduleHome.moduleVersions}"/>
+
+        <rich:dataTable value="#{moduleHome.moduleVersions}"
+                       var="_moduleVersion"
+                  rendered="#{not empty moduleHome.moduleVersions}"
+                rowClasses="rvgRowOne,rvgRowTwo"
+                        id="moduleVersionsTable">
+            <rich:column sortBy="#{_moduleVersion.moduleVersionId}">
+                <f:facet name="header">Module version id</f:facet>
+                <h:outputText value="#{_moduleVersion.moduleVersionId}"/>
+            </rich:column>
+            <h:column>
+                <f:facet name="header">Action</f:facet>
+                <s:link id="selectmoduleVersion"
+                     value="Select"
+                      view="/ModuleVersion.xhtml">
+                    <f:param name="moduleVersionModuleVersionId"
+                            value="#{_moduleVersion.moduleVersionId}"/>
+                    <f:param name="moduleVersionFrom" value="Module"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </h:form>
+
+    <div class="actionButtons">
+        <s:button
+               value="Add moduleVersion"
+                view="/ModuleVersionEdit.xhtml">
+            <f:param name="moduleModuleId"
+                    value="#{moduleHome.instance.moduleId}"/>
+            <f:param name="moduleVersionFrom" value="Module"/>
+        </s:button>
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

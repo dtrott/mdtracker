@@ -1,0 +1,170 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="module" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{moduleHome.managed ? 'Edit' : 'Add'} Module</f:facet>
+
+
+
+            <s:decorate id="artifactIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Artifact id</ui:define>
+                <h:inputText id="artifactId"
+                       required="true"
+                           size="50"
+                      maxlength="50"
+                          value="#{moduleHome.instance.artifactId}">
+                    <a:support event="onblur" reRender="artifactIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+            <s:decorate id="groupIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Group id</ui:define>
+                <h:inputText id="groupId"
+                       required="true"
+                           size="50"
+                      maxlength="50"
+                          value="#{moduleHome.instance.groupId}">
+                    <a:support event="onblur" reRender="groupIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{moduleHome.persist}"
+                       disabled="#{!moduleHome.wired}"
+                       rendered="#{!moduleHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{moduleHome.update}"
+                       rendered="#{moduleHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{moduleHome.remove}"
+                      immediate="true"
+                       rendered="#{moduleHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/Module.xhtml"
+                rendered="#{moduleHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty moduleFrom ? 'ModuleList' : moduleFrom}.xhtml"
+                rendered="#{!moduleHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Module ranges">
+        <h:form styleClass="association" id="moduleRangesChildren">
+
+            <h:outputText value="There are no moduleRanges associated with this module."
+                       rendered="#{empty moduleHome.moduleRanges}"/>
+
+            <rich:dataTable value="#{moduleHome.moduleRanges}"
+                           var="_moduleRange"
+                      rendered="#{not empty moduleHome.moduleRanges}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="moduleRangesTable">
+                <rich:column sortBy="#{_moduleRange.moduleRangeId}">
+                    <f:facet name="header">Module range id</f:facet>
+                    <h:outputText value="#{_moduleRange.moduleRangeId}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.endInclusive}">
+                    <f:facet name="header">End inclusive</f:facet>
+                    <h:outputText value="#{_moduleRange.endInclusive}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.startInclusive}">
+                    <f:facet name="header">Start inclusive</f:facet>
+                    <h:outputText value="#{_moduleRange.startInclusive}"/>
+                </rich:column>
+                <rich:column sortBy="#{_moduleRange.suggestion}">
+                    <f:facet name="header">Suggestion</f:facet>
+                    <h:outputText value="#{_moduleRange.suggestion}"/>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{moduleHome.managed}" id="moduleRanges">
+        <div class="actionButtons">
+            <s:button id="addmoduleRange"
+                   value="Add moduleRange"
+                    view="/ModuleRangeEdit.xhtml"
+             propagation="none">
+                 <f:param name="moduleModuleId"
+                         value="#{moduleHome.instance.moduleId}"/>
+                 <f:param name="moduleRangeFrom" value="Module"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+
+    <rich:tab label="Module versions">
+        <h:form styleClass="association" id="moduleVersionsChildren">
+
+            <h:outputText value="There are no moduleVersions associated with this module."
+                       rendered="#{empty moduleHome.moduleVersions}"/>
+
+            <rich:dataTable value="#{moduleHome.moduleVersions}"
+                           var="_moduleVersion"
+                      rendered="#{not empty moduleHome.moduleVersions}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="moduleVersionsTable">
+                <rich:column sortBy="#{_moduleVersion.moduleVersionId}">
+                    <f:facet name="header">Module version id</f:facet>
+                    <h:outputText value="#{_moduleVersion.moduleVersionId}"/>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{moduleHome.managed}" id="moduleVersions">
+        <div class="actionButtons">
+            <s:button id="addmoduleVersion"
+                   value="Add moduleVersion"
+                    view="/ModuleVersionEdit.xhtml"
+             propagation="none">
+                 <f:param name="moduleModuleId"
+                         value="#{moduleHome.instance.moduleId}"/>
+                 <f:param name="moduleVersionFrom" value="Module"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

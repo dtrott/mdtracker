@@ -1,0 +1,178 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="dependency" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{dependencyHome.managed ? 'Edit' : 'Add'} Dependency</f:facet>
+
+
+            <s:decorate id="moduleRangeIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Module range id</ui:define>
+                <h:inputText id="moduleRangeId"
+                       required="true"
+                       disabled="#{dependencyHome.managed}"
+                          value="#{dependencyHome.instance.id.moduleRangeId}">
+                    <a:support event="onblur" reRender="moduleRangeIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+            <s:decorate id="moduleVersionIdField" template="layout/edit.xhtml">
+                <ui:define name="label">Module version id</ui:define>
+                <h:inputText id="moduleVersionId"
+                       required="true"
+                       disabled="#{dependencyHome.managed}"
+                          value="#{dependencyHome.instance.id.moduleVersionId}">
+                    <a:support event="onblur" reRender="moduleVersionIdField" bypassUpdates="true" ajaxSingle="true"/>
+                </h:inputText>
+            </s:decorate>
+
+
+
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{dependencyHome.persist}"
+                       disabled="#{!dependencyHome.wired}"
+                       rendered="#{!dependencyHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{dependencyHome.update}"
+                       rendered="#{dependencyHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{dependencyHome.remove}"
+                      immediate="true"
+                       rendered="#{dependencyHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/Dependency.xhtml"
+                rendered="#{dependencyHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty dependencyFrom ? 'DependencyList' : dependencyFrom}.xhtml"
+                rendered="#{!dependencyHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Module range *" labelClass="required">
+    <div class="association" id="moduleRangeParent">
+
+        <h:outputText value="There is no moduleRange associated with this dependency."
+                   rendered="#{dependencyHome.instance.moduleRange == null}"/>
+
+        <rich:dataTable var="_moduleRange"
+                   value="#{dependencyHome.instance.moduleRange}"
+                rendered="#{dependencyHome.instance.moduleRange != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="moduleRangeTable">
+            <h:column>
+                <f:facet name="header">Module range id</f:facet>
+                <h:outputText value="#{_moduleRange.moduleRangeId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End inclusive</f:facet>
+                <h:outputText value="#{_moduleRange.endInclusive}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Module module id</f:facet>
+                <h:outputText value="#{_moduleRange.module.moduleId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start inclusive</f:facet>
+                <h:outputText value="#{_moduleRange.startInclusive}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Suggestion</f:facet>
+                <h:outputText value="#{_moduleRange.suggestion}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Version string by end version id version id</f:facet>
+                <h:outputText value="#{_moduleRange.versionStringByEndVersionId.versionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Version string by latest release version id version id</f:facet>
+                <h:outputText value="#{_moduleRange.versionStringByLatestReleaseVersionId.versionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Version string by start version id version id</f:facet>
+                <h:outputText value="#{_moduleRange.versionStringByStartVersionId.versionId}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{dependencyHome.instance.moduleRange != null ? 'changeParentmoduleRange' : 'selectParentmoduleRange'}" value="#{dependencyHome.instance.moduleRange != null ? 'Change' : 'Select'} moduleRange"
+                       view="/ModuleRangeList.xhtml">
+                <f:param name="from" value="DependencyEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Module version *" labelClass="required">
+    <div class="association" id="moduleVersionParent">
+
+        <h:outputText value="There is no moduleVersion associated with this dependency."
+                   rendered="#{dependencyHome.instance.moduleVersion == null}"/>
+
+        <rich:dataTable var="_moduleVersion"
+                   value="#{dependencyHome.instance.moduleVersion}"
+                rendered="#{dependencyHome.instance.moduleVersion != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="moduleVersionTable">
+            <h:column>
+                <f:facet name="header">Module version id</f:facet>
+                <h:outputText value="#{_moduleVersion.moduleVersionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Module module id</f:facet>
+                <h:outputText value="#{_moduleVersion.module.moduleId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Version string version id</f:facet>
+                <h:outputText value="#{_moduleVersion.versionString.versionId}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{dependencyHome.instance.moduleVersion != null ? 'changeParentmoduleVersion' : 'selectParentmoduleVersion'}" value="#{dependencyHome.instance.moduleVersion != null ? 'Change' : 'Select'} moduleVersion"
+                       view="/ModuleVersionList.xhtml">
+                <f:param name="from" value="DependencyEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

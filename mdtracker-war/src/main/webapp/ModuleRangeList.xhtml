@@ -1,0 +1,195 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="moduleRangeSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="ModuleRange Search Filter" switchType="ajax">
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{moduleRangeList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Search" action="/ModuleRangeList.xhtml"/>
+            <s:button id="reset" value="Reset" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">ModuleRange Search Results (#{empty moduleRangeList.resultList ? 0 : (moduleRangeList.paginated ? moduleRangeList.resultCount : moduleRangeList.resultList.size)})</f:facet>
+    <div class="results" id="moduleRangeList">
+
+    <h:outputText value="The moduleRange search returned no results."
+               rendered="#{empty moduleRangeList.resultList}"/>
+
+    <rich:dataTable id="moduleRangeList"
+                var="_moduleRange"
+              value="#{moduleRangeList.resultList}"
+           rendered="#{not empty moduleRangeList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{moduleRangeList}"/>
+                    <ui:param name="propertyLabel" value="Module range id"/>
+                    <ui:param name="propertyPath" value="moduleRange.moduleRangeId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_moduleRange.moduleRangeId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{moduleRangeList}"/>
+                    <ui:param name="propertyLabel" value="End inclusive"/>
+                    <ui:param name="propertyPath" value="moduleRange.endInclusive"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_moduleRange.endInclusive}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{moduleRangeList}"/>
+                    <ui:param name="propertyLabel" value="Module module id"/>
+                    <ui:param name="propertyPath" value="moduleRange.module.moduleId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_moduleRange.module.moduleId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{moduleRangeList}"/>
+                    <ui:param name="propertyLabel" value="Start inclusive"/>
+                    <ui:param name="propertyPath" value="moduleRange.startInclusive"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_moduleRange.startInclusive}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{moduleRangeList}"/>
+                    <ui:param name="propertyLabel" value="Suggestion"/>
+                    <ui:param name="propertyPath" value="moduleRange.suggestion"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_moduleRange.suggestion}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{moduleRangeList}"/>
+                    <ui:param name="propertyLabel" value="Version string by end version id version id"/>
+                    <ui:param name="propertyPath" value="moduleRange.versionStringByEndVersionId.versionId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_moduleRange.versionStringByEndVersionId.versionId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{moduleRangeList}"/>
+                    <ui:param name="propertyLabel" value="Version string by latest release version id version id"/>
+                    <ui:param name="propertyPath" value="moduleRange.versionStringByLatestReleaseVersionId.versionId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_moduleRange.versionStringByLatestReleaseVersionId.versionId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{moduleRangeList}"/>
+                    <ui:param name="propertyLabel" value="Version string by start version id version id"/>
+                    <ui:param name="propertyPath" value="moduleRange.versionStringByStartVersionId.versionId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_moduleRange.versionStringByStartVersionId.versionId}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'ModuleRange' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="moduleRangeViewId">
+                <f:param name="moduleRangeModuleRangeId"
+                        value="#{_moduleRange.moduleRangeId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/ModuleRangeEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="moduleRangeEdit"
+                rendered="#{empty from}">
+                <f:param name="moduleRangeModuleRangeId"
+                        value="#{_moduleRange.moduleRangeId}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/ModuleRangeList.xhtml"
+            rendered="#{moduleRangeList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/ModuleRangeList.xhtml"
+            rendered="#{moduleRangeList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{moduleRangeList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ModuleRangeList.xhtml"
+            rendered="#{moduleRangeList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{moduleRangeList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/ModuleRangeList.xhtml"
+            rendered="#{moduleRangeList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{moduleRangeList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/ModuleRangeEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create moduleRange">
+            <f:param name="moduleRangeModuleRangeId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>

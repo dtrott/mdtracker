@@ -1,0 +1,145 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <rich:panel>
+        <f:facet name="header">Dependency Details</f:facet>
+
+        <s:decorate id="moduleRangeId" template="layout/display.xhtml">
+            <ui:define name="label">Module range id</ui:define>
+            <h:outputText value="#{dependencyHome.instance.id.moduleRangeId}"/>
+        </s:decorate>
+        <s:decorate id="moduleVersionId" template="layout/display.xhtml">
+            <ui:define name="label">Module version id</ui:define>
+            <h:outputText value="#{dependencyHome.instance.id.moduleVersionId}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+    <div class="actionButtons">
+
+        <s:button view="/DependencyEdit.xhtml"
+                    id="edit"
+                 value="Edit"/>
+
+        <s:button view="/#{empty dependencyFrom ? 'DependencyList' : dependencyFrom}.xhtml"
+                    id="done"
+                 value="Done"/>
+
+    </div>
+
+    <rich:tabPanel switchType="ajax">
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Module range</h:panelGroup>
+        </f:facet>
+    <div class="association" id="moduleRangeParent">
+
+        <h:outputText value="There is no moduleRange associated with this dependency."
+                   rendered="#{dependencyHome.instance.moduleRange == null}"/>
+
+        <rich:dataTable var="_moduleRange"
+                   value="#{dependencyHome.instance.moduleRange}"
+                rendered="#{dependencyHome.instance.moduleRange != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="moduleRangeTable">
+            <h:column>
+                <f:facet name="header">Module range id</f:facet>
+                <h:outputText value="#{_moduleRange.moduleRangeId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">End inclusive</f:facet>
+                <h:outputText value="#{_moduleRange.endInclusive}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Module module id</f:facet>
+                <h:outputText value="#{_moduleRange.module.moduleId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Start inclusive</f:facet>
+                <h:outputText value="#{_moduleRange.startInclusive}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Suggestion</f:facet>
+                <h:outputText value="#{_moduleRange.suggestion}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Version string by end version id version id</f:facet>
+                <h:outputText value="#{_moduleRange.versionStringByEndVersionId.versionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Version string by latest release version id version id</f:facet>
+                <h:outputText value="#{_moduleRange.versionStringByLatestReleaseVersionId.versionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Version string by start version id version id</f:facet>
+                <h:outputText value="#{_moduleRange.versionStringByStartVersionId.versionId}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewmoduleRange"
+                     value="View"
+                      view="/ModuleRange.xhtml">
+                    <f:param name="moduleRangeModuleRangeId"
+                           value="#{_moduleRange.moduleRangeId}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab>
+        <f:facet name="label">
+            <h:panelGroup><h:graphicImage value="/img/manytoone.gif" style="vertical-align: middle; padding-right: 4px;"/>Module version</h:panelGroup>
+        </f:facet>
+    <div class="association" id="moduleVersionParent">
+
+        <h:outputText value="There is no moduleVersion associated with this dependency."
+                   rendered="#{dependencyHome.instance.moduleVersion == null}"/>
+
+        <rich:dataTable var="_moduleVersion"
+                   value="#{dependencyHome.instance.moduleVersion}"
+                rendered="#{dependencyHome.instance.moduleVersion != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="moduleVersionTable">
+            <h:column>
+                <f:facet name="header">Module version id</f:facet>
+                <h:outputText value="#{_moduleVersion.moduleVersionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Module module id</f:facet>
+                <h:outputText value="#{_moduleVersion.module.moduleId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Version string version id</f:facet>
+                <h:outputText value="#{_moduleVersion.versionString.versionId}"/>
+            </h:column>
+            <h:column styleClass="action">
+                <f:facet name="header">Action</f:facet>
+                <s:link id="viewmoduleVersion"
+                     value="View"
+                      view="/ModuleVersion.xhtml">
+                    <f:param name="moduleVersionModuleVersionId"
+                           value="#{_moduleVersion.moduleVersionId}"/>
+                </s:link>
+            </h:column>
+        </rich:dataTable>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

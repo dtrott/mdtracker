@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.davidtrott</groupId>
+        <artifactId>mdtracker</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <artifactId>mdtracker-ear</artifactId>
+    <version>1.0</version>
+    <packaging>ear</packaging>
+    <name>Maven Dependency Tracker Ear</name>
+
+    <build>
+        <finalName>mdtracker</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-ear-plugin</artifactId>
+                <configuration>
+                    <displayName>mdtracker</displayName>
+                    <version>5</version>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <modules>
+                        <ejbModule>
+                            <groupId>com.davidtrott</groupId>
+                            <artifactId>mdtracker-ejb</artifactId>
+                            <uri>mdtracker.jar</uri>
+                            <!-- uri needed since web.xml has this file name hard coded -->
+                        </ejbModule>
+
+                        <webModule>
+                            <groupId>com.davidtrott</groupId>
+                            <artifactId>mdtracker-war</artifactId>
+                            <contextRoot>/mdtracker</contextRoot>
+                        </webModule>
+                    </modules>
+                    <jboss>
+                        <version>4.2</version>
+                        <loader-repository>seam.jboss.org:loader=mdtracker</loader-repository>
+                    </jboss>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+
+        <!-- Project Dependencies -->
+
+        <dependency>
+            <groupId>com.davidtrott</groupId>
+            <artifactId>mdtracker-ejb</artifactId>
+            <type>ejb</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.davidtrott</groupId>
+            <artifactId>mdtracker-war</artifactId>
+            <type>war</type>
+        </dependency>
+
+        <!-- Drools -->
+
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-compiler</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-templates</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.drools</groupId>
+            <artifactId>drools-decisiontables</artifactId>
+        </dependency>
+
+        <!-- Seam Dependencies -->
+
+        <dependency>
+            <groupId>org.jboss.seam</groupId>
+            <artifactId>jboss-seam</artifactId>
+            <type>ejb</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.seam</groupId>
+            <artifactId>jboss-seam-remoting</artifactId>
+        </dependency>
+
+        <!-- RichFaces Dependencies -->
+
+        <dependency>
+            <groupId>org.richfaces.framework</groupId>
+            <artifactId>richfaces-api</artifactId>
+        </dependency>
+
+        <!-- Other Dependencies -->
+
+        <dependency>
+            <groupId>org.jboss.el</groupId>
+            <artifactId>jboss-el</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-jpdl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mvel</groupId>
+            <artifactId>mvel2</artifactId>
+        </dependency>
+    </dependencies>
+</project>

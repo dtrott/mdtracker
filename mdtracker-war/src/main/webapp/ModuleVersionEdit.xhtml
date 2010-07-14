@@ -1,0 +1,183 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:a="http://richfaces.org/a4j"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="moduleVersion" styleClass="edit">
+
+        <rich:panel>
+            <f:facet name="header">#{moduleVersionHome.managed ? 'Edit' : 'Add'} Module version</f:facet>
+
+            <div style="clear:both">
+                <span class="required">*</span>
+                required fields
+            </div>
+
+        </rich:panel>
+
+        <div class="actionButtons">
+
+            <h:commandButton id="save"
+                          value="Save"
+                         action="#{moduleVersionHome.persist}"
+                       disabled="#{!moduleVersionHome.wired}"
+                       rendered="#{!moduleVersionHome.managed}"/>
+
+            <h:commandButton id="update"
+                          value="Save"
+                         action="#{moduleVersionHome.update}"
+                       rendered="#{moduleVersionHome.managed}"/>
+
+            <h:commandButton id="delete"
+                          value="Delete"
+                         action="#{moduleVersionHome.remove}"
+                      immediate="true"
+                       rendered="#{moduleVersionHome.managed}"/>
+
+            <s:button id="cancelEdit"
+                   value="Cancel"
+             propagation="end"
+                    view="/ModuleVersion.xhtml"
+                rendered="#{moduleVersionHome.managed}"/>
+
+            <s:button id="cancelAdd"
+                   value="Cancel"
+             propagation="end"
+                    view="/#{empty moduleVersionFrom ? 'ModuleVersionList' : moduleVersionFrom}.xhtml"
+                rendered="#{!moduleVersionHome.managed}"/>
+
+        </div>
+    </h:form>
+
+<rich:tabPanel switchType="ajax">
+
+    <rich:tab label="Dependencies">
+        <h:form styleClass="association" id="dependenciesChildren">
+
+            <h:outputText value="There are no dependencies associated with this moduleVersion."
+                       rendered="#{empty moduleVersionHome.dependencies}"/>
+
+            <rich:dataTable value="#{moduleVersionHome.dependencies}"
+                           var="_dependency"
+                      rendered="#{not empty moduleVersionHome.dependencies}"
+                    rowClasses="rvgRowOne,rvgRowTwo"
+                            id="dependenciesTable">
+                <rich:column sortBy="#{_dependency.id.moduleRangeId}">
+                    <f:facet name="header">Module range id</f:facet>
+                    <h:outputText value="#{_dependency.id.moduleRangeId}"/>
+                </rich:column>
+                <rich:column sortBy="#{_dependency.id.moduleVersionId}">
+                    <f:facet name="header">Module version id</f:facet>
+                    <h:outputText value="#{_dependency.id.moduleVersionId}"/>
+                </rich:column>
+            </rich:dataTable>
+
+        </h:form>
+
+        <f:subview rendered="#{moduleVersionHome.managed}" id="dependencies">
+        <div class="actionButtons">
+            <s:button id="adddependency"
+                   value="Add dependency"
+                    view="/DependencyEdit.xhtml"
+             propagation="none">
+                 <f:param name="moduleVersionModuleVersionId"
+                         value="#{moduleVersionHome.instance.moduleVersionId}"/>
+                 <f:param name="dependencyFrom" value="ModuleVersion"/>
+            </s:button>
+        </div>
+        </f:subview>
+    </rich:tab>
+
+    <rich:tab label="Module *" labelClass="required">
+    <div class="association" id="moduleParent">
+
+        <h:outputText value="There is no module associated with this moduleVersion."
+                   rendered="#{moduleVersionHome.instance.module == null}"/>
+
+        <rich:dataTable var="_module"
+                   value="#{moduleVersionHome.instance.module}"
+                rendered="#{moduleVersionHome.instance.module != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="moduleTable">
+            <h:column>
+                <f:facet name="header">Module id</f:facet>
+                <h:outputText value="#{_module.moduleId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Artifact id</f:facet>
+                <h:outputText value="#{_module.artifactId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Group id</f:facet>
+                <h:outputText value="#{_module.groupId}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{moduleVersionHome.instance.module != null ? 'changeParentmodule' : 'selectParentmodule'}" value="#{moduleVersionHome.instance.module != null ? 'Change' : 'Select'} module"
+                       view="/ModuleList.xhtml">
+                <f:param name="from" value="ModuleVersionEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+
+    <rich:tab label="Version string *" labelClass="required">
+    <div class="association" id="versionStringParent">
+
+        <h:outputText value="There is no versionString associated with this moduleVersion."
+                   rendered="#{moduleVersionHome.instance.versionString == null}"/>
+
+        <rich:dataTable var="_versionString"
+                   value="#{moduleVersionHome.instance.versionString}"
+                rendered="#{moduleVersionHome.instance.versionString != null}"
+              rowClasses="rvgRowOne,rvgRowTwo"
+                      id="versionStringTable">
+            <h:column>
+                <f:facet name="header">Version id</f:facet>
+                <h:outputText value="#{_versionString.versionId}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Build</f:facet>
+                <h:outputText value="#{_versionString.build}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Custom</f:facet>
+                <h:outputText value="#{_versionString.custom}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Major</f:facet>
+                <h:outputText value="#{_versionString.major}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Minor</f:facet>
+                <h:outputText value="#{_versionString.minor}"/>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Snapshot</f:facet>
+                <h:outputText value="#{_versionString.snapshot}"/>
+            </h:column>
+        </rich:dataTable>
+
+        <div class="actionButtons">
+            <s:button id="#{moduleVersionHome.instance.versionString != null ? 'changeParentversionString' : 'selectParentversionString'}" value="#{moduleVersionHome.instance.versionString != null ? 'Change' : 'Select'} versionString"
+                       view="/VersionStringList.xhtml">
+                <f:param name="from" value="ModuleVersionEdit"/>
+            </s:button>
+        </div>
+
+    </div>
+    </rich:tab>
+</rich:tabPanel>
+</ui:define>
+
+</ui:composition>

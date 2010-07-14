@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns="http://jboss.com/products/seam/pages"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.2.xsd"
+      no-conversation-view-id="/DependencyList.xhtml"
+      login-required="true">
+
+   <begin-conversation join="true" flush-mode="MANUAL"/>
+
+   <action execute="#{dependencyHome.wire}"/>
+
+   <param name="dependencyFrom"/>
+   <param name="dependencyModuleRangeId" value="#{dependencyHome.dependencyId.moduleRangeId}"/>
+   <param name="dependencyModuleVersionId" value="#{dependencyHome.dependencyId.moduleVersionId}"/>
+   <param name="moduleRangeFrom"/>
+   <param name="moduleRangeModuleRangeId" value="#{moduleRangeHome.moduleRangeModuleRangeId}"/>
+   <param name="moduleFrom"/>
+   <param name="moduleModuleId" value="#{moduleHome.moduleModuleId}"/>
+
+   <param name="versionStringFrom"/>
+   <param name="versionStringVersionId" value="#{versionStringHome.versionStringVersionId}"/>
+
+
+   <param name="moduleVersionFrom"/>
+   <param name="moduleVersionModuleVersionId" value="#{moduleVersionHome.moduleVersionModuleVersionId}"/>
+
+
+
+   <navigation from-action="#{dependencyHome.persist}">
+      <rule if-outcome="persisted">
+         <end-conversation/>
+         <redirect view-id="/Dependency.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{dependencyHome.update}">
+      <rule if-outcome="updated">
+         <end-conversation/>
+         <redirect view-id="/Dependency.xhtml"/>
+      </rule>
+   </navigation>
+
+   <navigation from-action="#{dependencyHome.remove}">
+      <rule if-outcome="removed">
+         <end-conversation/>
+         <redirect view-id="/DependencyList.xhtml"/>
+      </rule>
+   </navigation>
+
+</page>

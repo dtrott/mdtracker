@@ -1,0 +1,180 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+
+<ui:define name="body">
+
+    <h:form id="versionStringSearch" styleClass="edit">
+
+        <rich:simpleTogglePanel label="VersionString Search Filter" switchType="ajax">
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Custom</ui:define>
+                <h:inputText id="custom" value="#{versionStringList.versionString.custom}"/>
+            </s:decorate>
+
+            <s:decorate template="layout/display.xhtml">
+                <ui:define name="label">Match</ui:define>
+                <h:selectOneRadio id="logic" value="#{versionStringList.restrictionLogicOperator}" styleClass="radio">
+                    <f:selectItem itemLabel="All" itemValue="and"/>
+                    <f:selectItem itemLabel="Any" itemValue="or"/>
+                </h:selectOneRadio>
+            </s:decorate>
+
+        </rich:simpleTogglePanel>
+
+        <div class="actionButtons">
+            <h:commandButton id="search" value="Search" action="/VersionStringList.xhtml"/>
+            <s:button id="reset" value="Reset" includePageParams="false"/>
+        </div>
+
+    </h:form>
+
+    <rich:panel>
+        <f:facet name="header">VersionString Search Results (#{empty versionStringList.resultList ? 0 : (versionStringList.paginated ? versionStringList.resultCount : versionStringList.resultList.size)})</f:facet>
+    <div class="results" id="versionStringList">
+
+    <h:outputText value="The versionString search returned no results."
+               rendered="#{empty versionStringList.resultList}"/>
+
+    <rich:dataTable id="versionStringList"
+                var="_versionString"
+              value="#{versionStringList.resultList}"
+           rendered="#{not empty versionStringList.resultList}">
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{versionStringList}"/>
+                    <ui:param name="propertyLabel" value="Version id"/>
+                    <ui:param name="propertyPath" value="versionString.versionId"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_versionString.versionId}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{versionStringList}"/>
+                    <ui:param name="propertyLabel" value="Major"/>
+                    <ui:param name="propertyPath" value="versionString.major"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_versionString.major}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{versionStringList}"/>
+                    <ui:param name="propertyLabel" value="Minor"/>
+                    <ui:param name="propertyPath" value="versionString.minor"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_versionString.minor}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{versionStringList}"/>
+                    <ui:param name="propertyLabel" value="Build"/>
+                    <ui:param name="propertyPath" value="versionString.build"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_versionString.build}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{versionStringList}"/>
+                    <ui:param name="propertyLabel" value="Custom"/>
+                    <ui:param name="propertyPath" value="versionString.custom"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_versionString.custom}"/>
+        </h:column>
+        <h:column>
+            <f:facet name="header">
+                <ui:include src="layout/sort.xhtml">
+                    <ui:param name="entityList" value="#{versionStringList}"/>
+                    <ui:param name="propertyLabel" value="Snapshot"/>
+                    <ui:param name="propertyPath" value="versionString.snapshot"/>
+                </ui:include>
+            </f:facet>
+            <h:outputText value="#{_versionString.snapshot}"/>
+        </h:column>
+        <rich:column styleClass="action">
+            <f:facet name="header">Action</f:facet>
+            <s:link view="/#{empty from ? 'VersionString' : from}.xhtml"
+                   value="#{empty from ? 'View' : 'Select'}"
+             propagation="#{empty from ? 'none' : 'default'}"
+                      id="versionStringViewId">
+                <f:param name="versionStringVersionId"
+                        value="#{_versionString.versionId}"/>
+            </s:link>
+            #{' '}
+            <s:link view="/VersionStringEdit.xhtml"
+                   value="Edit"
+             propagation="none"
+                      id="versionStringEdit"
+                rendered="#{empty from}">
+                <f:param name="versionStringVersionId"
+                        value="#{_versionString.versionId}"/>
+            </s:link>
+        </rich:column>
+    </rich:dataTable>
+
+    </div>
+    </rich:panel>
+
+    <div class="tableControl">
+
+        <s:link view="/VersionStringList.xhtml"
+            rendered="#{versionStringList.previousExists}"
+               value="#{messages.left}#{messages.left} First Page"
+                  id="firstPage">
+          <f:param name="firstResult" value="0"/>
+        </s:link>
+
+        <s:link view="/VersionStringList.xhtml"
+            rendered="#{versionStringList.previousExists}"
+               value="#{messages.left} Previous Page"
+                  id="previousPage">
+            <f:param name="firstResult"
+                    value="#{versionStringList.previousFirstResult}"/>
+        </s:link>
+
+        <s:link view="/VersionStringList.xhtml"
+            rendered="#{versionStringList.nextExists}"
+               value="Next Page #{messages.right}"
+                  id="nextPage">
+            <f:param name="firstResult"
+                    value="#{versionStringList.nextFirstResult}"/>
+        </s:link>
+
+        <s:link view="/VersionStringList.xhtml"
+            rendered="#{versionStringList.nextExists}"
+               value="Last Page #{messages.right}#{messages.right}"
+                  id="lastPage">
+            <f:param name="firstResult"
+                    value="#{versionStringList.lastFirstResult}"/>
+        </s:link>
+
+    </div>
+
+    <s:div styleClass="actionButtons" rendered="#{empty from}">
+        <s:button view="/VersionStringEdit.xhtml"
+                    id="create"
+           propagation="none"
+                 value="Create versionString">
+            <f:param name="versionStringVersionId"/>
+        </s:button>
+    </s:div>
+
+</ui:define>
+
+</ui:composition>
